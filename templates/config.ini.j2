@@ -1,0 +1,12 @@
+# {{ ansible_managed }}
+{% for section, options in gitea_config.iteritems() %}
+
+{% if section.upper() == 'DEFAULT' %}
+[{{ section|upper }}]
+{% else %}
+[{{ section|lower }}]
+{% endif %}
+{% for option, value in options.iteritems() %}
+{{ option|upper }} = {{ value }}
+{% endfor %}
+{% endfor %}

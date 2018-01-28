@@ -1,0 +1,69 @@
+- name: install binary
+  get_url:
+    url: '{{ gitea_binary_url }}'
+    dest: /usr/local/bin/gitea
+    checksum: 'sha256:{{ lookup("url", gitea_checksum_url).split(" ")[0] }}'
+    owner: root
+    group: root
+    mode: 0755
+  tags: gitea
+
+- name: create group
+  group:
+    name: '{{ gitea_group }}'
+    gid: '{{ gitea_gid }}'
+  tags: gitea
+
+- name: create user
+  user:
+    name: '{{ gitea_user }}'
+    group: '{{ gitea_group }}'
+    uid: '{{ gitea_uid }}'
+    home: /etc/gitea
+    shell: /bin/false
+  tags: gitea
+
+- name: create data directory
+  file:
+    path: '{{ gitea_config.repository.root }}'
+    owner: '{{ gitea_user }}'
+    group: '{{ gitea_group }}'
+    mode: 0750
+    state: directory
+    recurse: yes
+  tags: gitea
+
+- name: create config directory
+  file:
+    path: /etc/gitea
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
+  tags: gitea
+
+- name: create config file
+  template:
+    src: config.ini.j2
+    dest: /etc/gitea/config.ini
+    owner: root
+    group: '{{ gitea_group }}'
+    mode: 0640
+  tags: gitea
+
+- name: create service
+  template:
+    src: gitea.service.j2
+    dest: /etc/systemd/system/gitea.service
+    owner: root
+    group: root
+    mode: 0644
+  tags: gitea
+
+- name: enable and start service
+  systemd:
+    name: gitea
+    enabled: yes
+    state: started
+    daemon_reload: yes
+  tags: gitea

@@ -1,0 +1,22 @@
+gitea_version: 1.3.2
+gitea_architecture: linux-amd64
+gitea_binary_url: 'https://github.com/go-gitea/gitea/releases/download/v{{ gitea_version }}/gitea-{{ gitea_version }}-{{ gitea_architecture }}'
+gitea_checksum_url: '{{ gitea_binary_url }}.sha256'
+gitea_user: gitea
+gitea_group: gitea
+gitea_uid: 990
+gitea_gid: 990
+gitea_data_dir: /opt/gitea
+gitea_config:
+  default:
+    app_name: Gitea
+    run_mode: prod
+    run_user: '{{ gitea_user }}'
+  repository:
+    root: '{{ gitea_data_dir }}/repositories'
+  database:
+    db_type: sqlite3
+    path: '{{ gitea_data_dir}}/gitea.db'
+  log:
+    root_path: /var/log/gitea
+    level: Warn

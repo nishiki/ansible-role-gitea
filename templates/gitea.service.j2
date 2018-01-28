@@ -1,0 +1,13 @@
+[Unit]
+Description=Gitea (Git with a cup of tea)
+After=network.target
+
+[Service]
+Type=simple
+User={{ gitea_user }}
+Group={{ gitea_group }}
+ExecStart=/usr/local/bin/gitea web -c /etc/gitea/config.ini
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

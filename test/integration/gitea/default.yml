@@ -1,0 +1,4 @@
+- hosts: gitea
+  connection: local
+  roles:
+      - ansible-role-gitea
