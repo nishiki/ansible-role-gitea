@@ -19,18 +19,20 @@
     name: '{{ gitea_user }}'
     group: '{{ gitea_group }}'
     uid: '{{ gitea_uid }}'
-    home: /etc/gitea
+    home: '{{ gitea_home }}'
     shell: /bin/false
   tags: gitea
 
 - name: create data directory
   file:
-    path: '{{ gitea_config.repository.root }}'
+    path: '{{ item }}'
     owner: '{{ gitea_user }}'
     group: '{{ gitea_group }}'
     mode: 0750
     state: directory
-    recurse: yes
+  with_items:
+    - '{{ gitea_home }}'
+    - '{{ gitea_config.log.root_path }}'
   tags: gitea
 
 - name: create config directory
@@ -42,13 +44,20 @@
     state: directory
   tags: gitea
 
+- name: check if config exist
+  stat:
+    path: /etc/gitea/config.ini
+  register: config_file
+  tags: gitea
+
 - name: create config file
   template:
     src: config.ini.j2
     dest: /etc/gitea/config.ini
-    owner: root
+    owner: '{{ gitea_user }}'
     group: '{{ gitea_group }}'
     mode: 0640
+  when: not config_file.stat.exists
   tags: gitea
 
 - name: create service
