@@ -6,6 +6,7 @@
     owner: root
     group: root
     mode: 0755
+  notify: restart gitea
   tags: gitea
 
 - name: create group
@@ -32,6 +33,8 @@
     state: directory
   with_items:
     - '{{ gitea_home }}'
+    - '{{ gitea_home }}/data'
+    - '{{ gitea_config.repository.root }}'
     - '{{ gitea_config.log.root_path }}'
   tags: gitea
 
@@ -44,20 +47,10 @@
     state: directory
   tags: gitea
 
-- name: check if config exist
-  stat:
-    path: /etc/gitea/config.ini
-  register: config_file
-  tags: gitea
-
-- name: create config file
-  template:
-    src: config.ini.j2
-    dest: /etc/gitea/config.ini
-    owner: '{{ gitea_user }}'
-    group: '{{ gitea_group }}'
-    mode: 0640
-  when: not config_file.stat.exists
+- include: config.yml
+  with_dict: '{{ gitea_config }}'
+  loop_control:
+    loop_var: section
   tags: gitea
 
 - name: create service
