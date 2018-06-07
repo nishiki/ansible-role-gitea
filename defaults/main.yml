@@ -7,16 +7,5 @@ gitea_group: gitea
 gitea_uid: 990
 gitea_gid: 990
 gitea_home: /opt/gitea
-gitea_config:
-  default:
-    app_name: Gitea
-    run_mode: prod
-    run_user: '{{ gitea_user }}'
-  repository:
-    root: '{{ gitea_home }}/repositories'
-  database:
-    db_type: sqlite3
-    path: '{{ gitea_home }}/data/gitea.db'
-  log:
-    root_path: /var/log/gitea
-    level: Warn
+gitea_repository_directory: '{{ gitea_home }}/data/repositories'
+gitea_log_directory: /var/log/gitea

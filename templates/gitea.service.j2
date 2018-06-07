@@ -4,8 +4,9 @@ After=network.target
 
 [Service]
 Type=simple
+User={{ gitea_user }}
 Environment="GITEA_WORK_DIR={{ gitea_home }}"
-ExecStart=/usr/local/bin/gitea web -c /etc/gitea/config.ini
+ExecStart=/usr/local/bin/gitea web -c {{ gitea_home }}/data/config.ini
 Restart=always
 
 [Install]

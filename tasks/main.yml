@@ -21,7 +21,7 @@
     group: '{{ gitea_group }}'
     uid: '{{ gitea_uid }}'
     home: '{{ gitea_home }}'
-    shell: /bin/false
+    shell: /bin/bash
   tags: gitea
 
 - name: create data directory
@@ -34,23 +34,33 @@
   with_items:
     - '{{ gitea_home }}'
     - '{{ gitea_home }}/data'
-    - '{{ gitea_config.repository.root }}'
-    - '{{ gitea_config.log.root_path }}'
+    - '{{ gitea_repository_directory }}'
+    - '{{ gitea_log_directory }}'
   tags: gitea
 
-- name: create config directory
+- name: test if config.ini exist
+  stat:
+    path: '{{ gitea_home }}/data/config.ini'
+  register: st
+  tags: gitea
+
+- name: set properties for config file
   file:
-    path: /etc/gitea
+    path: '{{ gitea_home }}/data/config.ini'
     owner: root
-    group: root
-    mode: 0755
-    state: directory
+    group: '{{ gitea_group }}'
+    mode: 0640
+  when: st.stat.exists
   tags: gitea
 
-- include: config.yml
-  with_dict: '{{ gitea_config }}'
-  loop_control:
-    loop_var: section
+- name: create an empty config file
+  file:
+    path: '{{ gitea_home }}/data/config.ini'
+    owner: '{{ gitea_user }}'
+    group: '{{ gitea_group }}'
+    mode: 0640
+    state: touch
+  when: not st.stat.exists
   tags: gitea
 
 - name: create service

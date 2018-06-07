@@ -1,7 +1,0 @@
-{% for section, options in gitea_config.iteritems() %}
-
-[{{ section }}]
-{% for option, value in options.iteritems() %}
-{{ option|upper }} = {{ value }}
-{% endfor %}
-{% endfor %}
