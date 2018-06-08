@@ -7,6 +7,7 @@ Type=simple
 User={{ gitea_user }}
 Environment="GITEA_WORK_DIR={{ gitea_home }}"
 ExecStart=/usr/local/bin/gitea web -c {{ gitea_home }}/data/config.ini
+RestartSec=10
 Restart=always
 
 [Install]
